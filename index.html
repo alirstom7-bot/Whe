@@ -363,7 +363,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             sectors.forEach((sector, i) => {
-                const angle = i * arc;
+                const angle = i * arc - Math.PI / 2; // إزاحة البداية لتتطابق مع المؤشر العلوي تماماً
 
                 ctx.beginPath();
                 ctx.fillStyle = sector.color;
@@ -396,22 +396,17 @@
             isSpinning = true;
             spinBtn.classList.add("disabled");
 
-            // 1. اختيار الجائزة الفائزة عشوائياً أولاً
+            // اختيار الجائزة عشوائياً أولاً
             const winningIndex = Math.floor(Math.random() * numSectors);
             const winningPrize = sectors[winningIndex].text;
 
-            // 2. حساب الزاوية الدقيقة التي تجعل القسم الفائز يستقر تماماً تحت المؤشر العلوي
+            // حساب الزاوية الدقيقة لاستقرار القطاع تحت المؤشر العلوي تماماً مع إزاحة الرسم
             const degreesPerSector = 360 / numSectors;
-            // زاوية منتصف القسم المستهدف
-            const targetSectorCenterAngle = winningIndex * degreesPerSector + (degreesPerSector / 2);
+            const targetAngle = 360 - (winningIndex * degreesPerSector);
+            const extraSpins = 7; // عدد اللفات الكاملة
             
-            // نريد أن يكون هذا المنتصف في الأعلى تماماً (عند زاوية 360/0)
-            const extraSpins = 6; // عدد اللفات الكاملة للاستعراض
-            const targetRotation = (extraSpins * 360) + (360 - targetSectorCenterAngle);
+            currentRotation = (extraSpins * 360) + targetAngle;
 
-            currentRotation = targetRotation;
-
-            // 3. تدوير العجلة لتستقر تماماً على النتيجة المختارة
             gsap.to(wheelWrapper, {
                 rotation: currentRotation,
                 duration: 5,
@@ -419,8 +414,6 @@
                 onComplete: () => {
                     isSpinning = false;
                     spinBtn.classList.remove("disabled");
-
-                    // إظهار النتيجة المطابقة 100%
                     tg.showAlert(`🎉 مبروك! لقد فزت بـ: ${winningPrize}`);
                 }
             });

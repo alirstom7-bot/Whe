@@ -21,7 +21,7 @@
         }
 
         body {
-            background-color: #0b1c2d; /* نفس الخلفية الزرقاء الداكنة في الصورة */
+            background-color: #0b1c2d;
             color: #fff;
             text-align: center;
             font-family: 'Tahoma', sans-serif;
@@ -33,7 +33,6 @@
             min-height: 100vh;
         }
 
-        /* رأس الصفحة العلوي (LAMIN + الإغلاق) */
         .header {
             width: 100%;
             display: flex;
@@ -64,7 +63,6 @@
             cursor: pointer;
         }
 
-        /* بطاقة معلومات المستخدم (البروفايل المصغر) */
         .user-card {
             background: #112840;
             border: 1px solid #1a3c5e;
@@ -116,7 +114,6 @@
             border: 2px solid #5275e0;
         }
 
-        /* رسالة التنبيه بالإيداع */
         .deposit-alert {
             background: rgba(212, 175, 55, 0.08);
             border: 1px solid rgba(212, 175, 55, 0.3);
@@ -130,7 +127,6 @@
             text-align: center;
         }
 
-        /* حاوية العجلة الأساسية */
         .wheel-section {
             background: #112840;
             border: 1px solid #1a3c5e;
@@ -159,7 +155,6 @@
             margin: 0 auto;
         }
 
-        /* إطار النقاط المضيء حول العجلة */
         .wheel-border {
             position: absolute;
             width: 100%;
@@ -171,7 +166,6 @@
             z-index: 5;
         }
 
-        /* المؤشر العلوي الأزرق */
         .pointer {
             position: absolute;
             top: -12px;
@@ -186,7 +180,6 @@
             filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
         }
 
-        /* الحاوية القابلة للتدوران لمنع الاهتزاز */
         #wheelWrapper {
             position: absolute;
             width: 100%;
@@ -203,7 +196,6 @@
             border-radius: 50%;
         }
 
-        /* زر الدوران في المنتصف */
         .spin-btn {
             position: absolute;
             top: 50%;
@@ -235,7 +227,6 @@
         .spin-btn:active { transform: translate(-50%, -50%) scale(0.95); }
         .spin-btn.disabled { opacity: 0.7; cursor: not-allowed; }
 
-        /* قسم الإحصائيات في الأسفل */
         .stats-section {
             background: #112840;
             border: 1px solid #1a3c5e;
@@ -281,7 +272,6 @@
 </head>
 <body>
 
-    <!-- رأس التطبيق -->
     <div class="header">
         <button class="close-btn" onclick="tg.close()">
             <i class="fas fa-times"></i> إغلاق
@@ -290,7 +280,6 @@
         <i class="fas fa-ellipsis-v menu-dots"></i>
     </div>
 
-    <!-- بطاقة معلومات الحساب -->
     <div class="user-card">
         <div class="user-info">
             <div class="user-name">Ali Rs</div>
@@ -302,12 +291,10 @@
         <div class="user-avatar">AR</div>
     </div>
 
-    <!-- تنبيه الإيداع -->
     <div class="deposit-alert">
         تحتاج إلى إيداع 30,000 NSP للحصول على لفة اليوم.
     </div>
 
-    <!-- قسم العجلة -->
     <div class="wheel-section">
         <div class="wheel-section-title">
             <span>العجلة</span>
@@ -318,7 +305,6 @@
             <div class="pointer"></div>
             <div class="wheel-border"></div>
             
-            <!-- حاوية الدوران الثابتة -->
             <div id="wheelWrapper">
                 <canvas id="wheelCanvas" width="600" height="600"></canvas>
             </div>
@@ -330,7 +316,6 @@
         </div>
     </div>
 
-    <!-- قسم الإحصائيات -->
     <div class="stats-section">
         <div class="stats-header">
             <span>إحصائياتك</span>
@@ -348,7 +333,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        // جلب معرف المستخدم الحقيقي من تيليجرام إذا توفر
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             document.getElementById('tgId').innerText = tg.initDataUnsafe.user.id;
         }
@@ -358,7 +342,6 @@
         const wheelWrapper = document.getElementById("wheelWrapper");
         const spinBtn = document.getElementById("spinBtn");
 
-        // الجوائز الـ 10 المطابقة للصور بدقة
         const sectors = [
             { text: "5,000 NSP", color: "#133152", textColor: "#fff" },
             { text: "$ 10", color: "#1c4470", textColor: "#fff" },
@@ -377,7 +360,6 @@
         let currentRotation = 0;
         let isSpinning = false;
 
-        // دالة رسم العجلة بدقة عالية لضمان عدم وجود أي تغبيش
         function drawWheel() {
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
@@ -388,7 +370,6 @@
             sectors.forEach((sector, i) => {
                 const angle = i * arc;
 
-                // رسم القطاع
                 ctx.beginPath();
                 ctx.fillStyle = sector.color;
                 ctx.moveTo(centerX, centerY);
@@ -396,12 +377,10 @@
                 ctx.lineTo(centerX, centerY);
                 ctx.fill();
 
-                // خط فاصل نحيف بين الأقسام
                 ctx.strokeStyle = "rgba(0, 198, 255, 0.2)";
                 ctx.lineWidth = 2;
                 ctx.stroke();
 
-                // رسم النصوص
                 ctx.save();
                 ctx.translate(centerX, centerY);
                 ctx.rotate(angle + arc / 2);
@@ -417,13 +396,12 @@
 
         drawWheel();
 
-        // دالة تدوير العجلة بسلاسة وبدون أي اهتزاز
         function spinWheel() {
             if (isSpinning) return;
             isSpinning = true;
             spinBtn.classList.add("disabled");
 
-            const fullSpins = Math.floor(Math.random() * 4) + 6; // من 6 إلى 9 لفات
+            const fullSpins = Math.floor(Math.random() * 4) + 6; 
             const randomDegree = Math.random() * 360;
             const totalDegree = (fullSpins * 360) + randomDegree;
 
@@ -437,9 +415,13 @@
                     isSpinning = false;
                     spinBtn.classList.remove("disabled");
 
+                    // المعادلة المصححة لتحديد الفائز بناءً على موقع المؤشر في الأعلى تماماً (0 درجة بعد المعايرة)
                     const normalizedDegree = currentRotation % 360;
-                    const winningIndex = Math.floor((360 - (normalizedDegree % 360)) / (360 / numSectors)) % numSectors;
-                    const winningPrize = sectors[winningIndex].text;
+                    const sectorAngle = 360 / numSectors;
+                    
+                    // حساب رقم القطاع الصحيح بدقة مطابقة للرسم
+                    const winningIndex = Math.floor((360 - (normalizedDegree % 360) + (sectorAngle / 2)) % 360 / sectorAngle);
+                    const winningPrize = sectors[(numSectors - winningIndex) % numSectors].text;
 
                     tg.showAlert(`🎉 مبروك! لقد فزت بـ: ${winningPrize}`);
                 }

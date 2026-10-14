@@ -5,13 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>عجلة الحظ - LAMIN</title>
     
-    <!-- مكتبة تيليجرام الـ Mini App -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    
-    <!-- مكتبة الأيقونات FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- مكتبة GSAP للرسوم المتحركة السلسة -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
     <style>
@@ -401,12 +396,22 @@
             isSpinning = true;
             spinBtn.classList.add("disabled");
 
-            const fullSpins = Math.floor(Math.random() * 4) + 6; 
-            const randomDegree = Math.random() * 360;
-            const totalDegree = (fullSpins * 360) + randomDegree;
+            // 1. اختيار الجائزة الفائزة عشوائياً أولاً
+            const winningIndex = Math.floor(Math.random() * numSectors);
+            const winningPrize = sectors[winningIndex].text;
 
-            currentRotation += totalDegree;
+            // 2. حساب الزاوية الدقيقة التي تجعل القسم الفائز يستقر تماماً تحت المؤشر العلوي
+            const degreesPerSector = 360 / numSectors;
+            // زاوية منتصف القسم المستهدف
+            const targetSectorCenterAngle = winningIndex * degreesPerSector + (degreesPerSector / 2);
+            
+            // نريد أن يكون هذا المنتصف في الأعلى تماماً (عند زاوية 360/0)
+            const extraSpins = 6; // عدد اللفات الكاملة للاستعراض
+            const targetRotation = (extraSpins * 360) + (360 - targetSectorCenterAngle);
 
+            currentRotation = targetRotation;
+
+            // 3. تدوير العجلة لتستقر تماماً على النتيجة المختارة
             gsap.to(wheelWrapper, {
                 rotation: currentRotation,
                 duration: 5,
@@ -415,13 +420,7 @@
                     isSpinning = false;
                     spinBtn.classList.remove("disabled");
 
-                    // المعادلة المعايرة والمضبوطة تماماً لتطابق مكان المؤشر في الأعلى
-                    const normalizedDegree = (360 - (currentRotation % 360)) % 360;
-                    const sectorAngle = 360 / numSectors;
-                    const winningIndex = Math.floor((normalizedDegree + (sectorAngle / 2)) / sectorAngle) % numSectors;
-                    
-                    const winningPrize = sectors[winningIndex].text;
-
+                    // إظهار النتيجة المطابقة 100%
                     tg.showAlert(`🎉 مبروك! لقد فزت بـ: ${winningPrize}`);
                 }
             });

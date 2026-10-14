@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>عجلة الحظ - INFINTY FALCON</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <style>
+        body { background: #121212; color: #fff; text-align: center; font-family: Tahoma, sans-serif; margin: 0; padding: 20px; }
+        .wheel-container { position: relative; width: 300px; height: 300px; margin: 30px auto; }
+        #wheelCanvas { width: 100%; height: 100%; border-radius: 50%; border: 5px solid #d4af37; background: #222; }
+        .pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 30px; color: #d4af37; z-index: 10; }
+        button { background: #d4af37; color: #000; border: none; padding: 12px 24px; font-size: 18px; font-weight: bold; border-radius: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>🎰 عجلة الحظ اليومية</h2>
+    <div class="wheel-container">
+        <div class="pointer">▼</div>
+        <canvas id="wheelCanvas" width="300" height="300"></canvas>
+    </div>
+    <button onclick="spinWheel()">⚡ تدوير العجلة</button>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const canvas = document.getElementById("wheelCanvas");
+        const ctx = canvas.getContext("2d");
+        const sectors = ["5,000 ل.س", "حظاً أوفراً", "10,000 ل.س", "لفة إضافية", "2,000 ل.س", "خطأ"];
+        const arc = Math.PI / (sectors.length / 2);
+        const colors = ["#d4af37", "#1a1a1a", "#b8860b", "#333", "#ffd700", "#444"];
+
+        function drawWheel() {
+            sectors.forEach((text, i) => {
+                const angle = i * arc;
+                ctx.beginPath();
+                ctx.fillStyle = colors[i];
+                ctx.moveTo(150, 150);
+                ctx.arc(150, 150, 150, angle, angle + arc, false);
+                ctx.lineTo(150, 150);
+                ctx.fill();
+                ctx.save();
+                ctx.translate(150 + Math.cos(angle + arc / 2) * 90, 150 + Math.sin(angle + arc / 2) * 90);
+                ctx.rotate(angle + arc / 2 + Math.PI / 2);
+                ctx.fillStyle = "#fff";
+                ctx.font = "bold 12px Tahoma";
+                ctx.fillText(text, -ctx.measureText(text).width / 2, 0);
+                ctx.restore();
+            });
+        }
+        drawWheel();
+
+        function spinWheel() {
+            let randomAngle = Math.floor(Math.random() * 360) + 1440; // لفات متعددة
+            gsap.to(canvas, {
+                rotation: "+=" + randomAngle,
+                duration: 3,
+                ease: "power4.out",
+                onComplete: () => {
+                    tg.showAlert("🎉 انتهت اللفة! شكراً لمشاركتك.");
+                }
+            });
+        }
+    </script>
+</body>
+</html>

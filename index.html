@@ -415,13 +415,12 @@
                     isSpinning = false;
                     spinBtn.classList.remove("disabled");
 
-                    // المعادلة المصححة لتحديد الفائز بناءً على موقع المؤشر في الأعلى تماماً (0 درجة بعد المعايرة)
-                    const normalizedDegree = currentRotation % 360;
+                    // المعادلة المعايرة والمضبوطة تماماً لتطابق مكان المؤشر في الأعلى
+                    const normalizedDegree = (360 - (currentRotation % 360)) % 360;
                     const sectorAngle = 360 / numSectors;
+                    const winningIndex = Math.floor((normalizedDegree + (sectorAngle / 2)) / sectorAngle) % numSectors;
                     
-                    // حساب رقم القطاع الصحيح بدقة مطابقة للرسم
-                    const winningIndex = Math.floor((360 - (normalizedDegree % 360) + (sectorAngle / 2)) % 360 / sectorAngle);
-                    const winningPrize = sectors[(numSectors - winningIndex) % numSectors].text;
+                    const winningPrize = sectors[winningIndex].text;
 
                     tg.showAlert(`🎉 مبروك! لقد فزت بـ: ${winningPrize}`);
                 }

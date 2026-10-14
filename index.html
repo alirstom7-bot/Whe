@@ -342,11 +342,11 @@
             { text: "$ 10", color: "#1c4470", textColor: "#fff" },
             { text: "5 نقاط ولاء", color: "#133152", textColor: "#fff" },
             { text: "25,000 NSP", color: "#1c4470", textColor: "#fff" },
-            { text: "$ 1", color: "#133152", textColor: "#fff" },
+            { text: "$ 1", color: "#1c4470", textColor: "#fff" },
             { text: "تعويض 5%", color: "#1c4470", textColor: "#fff" },
-            { text: "بونص 10%", color: "#133152", textColor: "#fff" },
+            { text: "بونص 10%", color: "#1c4470", textColor: "#fff" },
             { text: "$ 25", color: "#1c4470", textColor: "#fff" },
-            { text: "10,000 NSP", color: "#133152", textColor: "#fff" },
+            { text: "10,000 NSP", color: "#1c4470", textColor: "#fff" },
             { text: "قسيمة كوبون", color: "#1c4470", textColor: "#fff" }
         ];
 
@@ -363,7 +363,7 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             sectors.forEach((sector, i) => {
-                const angle = i * arc - Math.PI / 2; // إزاحة البداية لتتطابق مع المؤشر العلوي تماماً
+                const angle = i * arc;
 
                 ctx.beginPath();
                 ctx.fillStyle = sector.color;
@@ -396,16 +396,21 @@
             isSpinning = true;
             spinBtn.classList.add("disabled");
 
-            // اختيار الجائزة عشوائياً أولاً
+            // اختيار الفائز أولاً بشكل قاطع وعشوائي
             const winningIndex = Math.floor(Math.random() * numSectors);
             const winningPrize = sectors[winningIndex].text;
 
-            // حساب الزاوية الدقيقة لاستقرار القطاع تحت المؤشر العلوي تماماً مع إزاحة الرسم
-            const degreesPerSector = 360 / numSectors;
-            const targetAngle = 360 - (winningIndex * degreesPerSector);
-            const extraSpins = 7; // عدد اللفات الكاملة
+            // زاوية القسم الواحد
+            const sectorAngle = 360 / numSectors;
+
+            // حساب الزاوية الدقيقة لمنتصف القسم المستهدف ليكون تحت المؤشر تماماً
+            const targetOffset = winningIndex * sectorAngle + (sectorAngle / 2);
             
-            currentRotation = (extraSpins * 360) + targetAngle;
+            // حساب الزاوية الكلية مع إضافة عدة لفات كاملة (مثلاً 8 لفات)
+            const fullSpins = 360 * 8;
+            const finalRotation = currentRotation + fullSpins + (360 - (currentRotation % 360)) - targetOffset;
+
+            currentRotation = finalRotation;
 
             gsap.to(wheelWrapper, {
                 rotation: currentRotation,

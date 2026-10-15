@@ -152,11 +152,8 @@
             document.getElementById('userAvatar').innerText = userName.substring(0, 2).toUpperCase();
         }
 
-        // جلب البيانات من الـ LocalStorage (المرتبطة بحساب المستخدم)
         let userWallet = parseInt(localStorage.getItem(`wallet_${userId}`)) || 0;
         document.getElementById('userBalance').innerText = userWallet;
-
-        // فحص حالة النسبة المئوية المؤقتة (24 ساعة)
         checkPromoStatus();
 
         const canvas = document.getElementById("wheelCanvas");
@@ -164,7 +161,7 @@
         const wheelWrapper = document.getElementById("wheelWrapper");
         const spinBtn = document.getElementById("spinBtn");
 
-        // جلب الإعدادات المحدثة من الأدمن إن وجدت أو استخدام الافتراضية
+        // جلب الإعدادات (تلقائياً يتم جلبها من الباتش الخاص بالسيرفر أو LocalStorage)
         let sectors = JSON.parse(localStorage.getItem('admin_sectors')) || [
             { text: "100", color: "#133152", textColor: "#fff" },
             { text: "200", color: "#1c4470", textColor: "#fff" },
@@ -172,7 +169,7 @@
             { text: "400", color: "#1c4470", textColor: "#fff" },
             { text: "حظ أوفراً", color: "#133152", textColor: "#fff" },
             { text: "إعادة تدوير", color: "#1c4470", textColor: "#fff" },
-            { text: "15% بونص", color: "#1c4470", textColor: "#fff" }
+            { text: "15% بونص", color: "#133152", textColor: "#fff" }
         ];
 
         let currentRotation = 0;
@@ -217,7 +214,7 @@
         drawWheel();
 
         function spinWheel() {
-            // التحقق من حالة العجلة في الإدارة
+            // التحقق من حالة العجلة الواردة من إعدادات البوت
             const adminWheelStatus = localStorage.getItem('admin_wheel_enabled');
             if (adminWheelStatus === 'false') {
                 tg.showAlert("⚠️ العجلة متوقفة مؤقتاً من قبل الإدارة.");
@@ -255,13 +252,11 @@
                     isSpinning = false;
                     spinBtn.classList.remove("disabled");
 
-                    // معالجة نتيجة الجائزة
                     if (winningPrize.includes("حظ") || winningPrize.includes("أوفر")) {
                         tg.showAlert("حظ أوفراً");
                     } else {
                         tg.showAlert(`🎉 مبروك! لقد فزت بـ: ${winningPrize}`);
                         
-                        // إذا كانت الجائزة أرقام، أضفها لمحفظة البوت
                         let prizeValue = parseInt(winningPrize.replace(/\D/g, ''));
                         if (!isNaN(prizeValue) && prizeValue > 0) {
                             userWallet += prizeValue;
@@ -269,20 +264,18 @@
                             document.getElementById('userBalance').innerText = userWallet;
                         }
 
-                        // إذا كانت النسبة المئوية، تفعيلها لـ 24 ساعة للمستخدم الحالي
                         if (winningPrize.includes('%') || winningPrize.includes('بونص')) {
                             activatePromoBonus();
                         }
                     }
 
-                    // إضافة السجل للإحصائيات
                     addStatRecord(winningPrize);
                 }
             });
         }
 
         function activatePromoBonus() {
-            const expireTime = new Date().getTime() + (24 * 60 * 60 * 1000); // 24 ساعة قادمة
+            const expireTime = new Date().getTime() + (24 * 60 * 60 * 1000);
             localStorage.setItem(`promo_expire_${userId}`, expireTime);
             localStorage.setItem(`promo_active_${userId}`, 'true');
             checkPromoStatus();
@@ -297,9 +290,7 @@
                 const now = new Date().getTime();
                 if (now < expireTime) {
                     alertBox.style.display = 'block';
-                    // يمكنك محاكاة شحن المحفظة هنا لربط شرط الشحن
                 } else {
-                    // انتهت الـ 24 ساعة ولم يشحن -> العودة للنسبة الأساسية
                     localStorage.removeItem(`promo_active_${userId}`);
                     localStorage.removeItem(`promo_expire_${userId}`);
                     alertBox.style.display = 'none';

@@ -337,17 +337,12 @@
         const wheelWrapper = document.getElementById("wheelWrapper");
         const spinBtn = document.getElementById("spinBtn");
 
+        // الأقسام الأربعة الجديدة
         const sectors = [
-            { text: "5,000 NSP", color: "#133152", textColor: "#fff" },
-            { text: "$ 10", color: "#1c4470", textColor: "#fff" },
-            { text: "5 نقاط ولاء", color: "#133152", textColor: "#fff" },
-            { text: "25,000 NSP", color: "#133152", textColor: "#fff" },
-            { text: "$ 1", color: "#133152", textColor: "#fff" },
-            { text: "تعويض 5%", color: "#1c4470", textColor: "#fff" },
-            { text: "بونص 10%", color: "#133152", textColor: "#fff" },
-            { text: "$ 25", color: "#1c4470", textColor: "#fff" },
-            { text: "10,000 NSP", color: "#133152", textColor: "#fff" },
-            { text: "قسيمة كوبون", color: "#1c4470", textColor: "#fff" }
+            { text: "1,000", color: "#133152", textColor: "#fff" },
+            { text: "2,000", color: "#1c4470", textColor: "#fff" },
+            { text: "5% بونص", color: "#133152", textColor: "#fff" },
+            { text: "حظ أوفراً", color: "#1c4470", textColor: "#fff" }
         ];
 
         const numSectors = sectors.length;
@@ -372,8 +367,8 @@
                 ctx.lineTo(centerX, centerY);
                 ctx.fill();
 
-                ctx.strokeStyle = "rgba(0, 198, 255, 0.2)";
-                ctx.lineWidth = 2;
+                ctx.strokeStyle = "rgba(0, 198, 255, 0.3)";
+                ctx.lineWidth = 3;
                 ctx.stroke();
 
                 ctx.save();
@@ -382,8 +377,8 @@
 
                 ctx.textAlign = "right";
                 ctx.fillStyle = sector.textColor;
-                ctx.font = "bold 20px Tahoma";
-                ctx.fillText(sector.text, radius - 65, 7);
+                ctx.font = "bold 24px Tahoma";
+                ctx.fillText(sector.text, radius - 80, 8);
 
                 ctx.restore();
             });
@@ -396,21 +391,20 @@
             isSpinning = true;
             spinBtn.classList.add("disabled");
 
-            // 1. اختيار الجائزة عشوائياً أولاً
+            // 1. اختيار الفائز عشوائياً
             const winningIndex = Math.floor(Math.random() * numSectors);
             const winningPrize = sectors[winningIndex].text;
 
-            // 2. المعادلة المصححة بالكامل لمطابقة حركة الدوران مع المؤشر العلوي تماماً
+            // 2. حساب الزاوية بدقة تامة للأقسام الأربعة لضمان التطابق الفعلي تحت المؤشر العلوي
             const degreesPerSector = 360 / numSectors;
-            // حساب زاوية التوقف بدقة عكسية لاتجاه الدوران
-            const targetAngle = (360 - (winningIndex * degreesPerSector)) - (degreesPerSector / 2);
+            const targetAngle = 360 - (winningIndex * degreesPerSector) - (degreesPerSector / 2);
             
-            const extraSpins = 360 * 8; // 8 لفات كاملة
+            const extraSpins = 360 * 6; // 6 لفات كاملة
             currentRotation = currentRotation + (extraSpins - (currentRotation % 360)) + targetAngle;
 
             gsap.to(wheelWrapper, {
                 rotation: currentRotation,
-                duration: 5,
+                duration: 4.5,
                 ease: "power4.out",
                 onComplete: () => {
                     isSpinning = false;

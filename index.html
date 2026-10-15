@@ -287,7 +287,7 @@
     </div>
 
     <div class="deposit-alert">
-        تحتاج إلى إيداع 30,000 NSP للحصول على لفة اليوم.
+        تحتاج إلى إيداع 50,000 NSP للحصول على لفة اليوم.
     </div>
 
     <div class="wheel-section">
@@ -357,7 +357,6 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             sectors.forEach((sector, i) => {
-                // إزاحة زاوية البداية بـ -90 درجة (- Math.PI / 2) لتبدأ الأقسام من الأعلى تماماً تحت المؤشر
                 const angle = i * arc - Math.PI / 2;
 
                 ctx.beginPath();
@@ -391,15 +390,14 @@
             isSpinning = true;
             spinBtn.classList.add("disabled");
 
-            // 1. اختيار الفائز عشوائياً
             const winningIndex = Math.floor(Math.random() * numSectors);
             const winningPrize = sectors[winningIndex].text;
 
-            // 2. حساب زاوية التوقف بدقة متناهية لتطابق القسم المستهدف تماماً تحت المؤشر العلوي
             const degreesPerSector = 360 / numSectors;
-            const targetAngle = 360 - (winningIndex * degreesPerSector);
+            // إضافة نصف زاوية القسم (45 درجة) لضمان الاستقرار في منتصف القسم تماماً بعيداً عن الخطوط
+            const targetAngle = 360 - (winningIndex * degreesPerSector) - (degreesPerSector / 2);
             
-            const extraSpins = 360 * 6; // 6 لفات كاملة للإثارة
+            const extraSpins = 360 * 6;
             currentRotation = currentRotation + (extraSpins - (currentRotation % 360)) + targetAngle;
 
             gsap.to(wheelWrapper, {

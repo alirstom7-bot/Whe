@@ -3,209 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>عجلة الحظ مع لوحة التحكم - LAMIN</title>
+    <title>عجلة الحظ - LAMIN</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
     <style>
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
-        }
-
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body {
-            background-color: #0b1c2d;
-            color: #fff;
-            text-align: center;
-            font-family: 'Tahoma', sans-serif;
-            margin: 0;
-            padding: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
+            background-color: #0b1c2d; color: #fff; text-align: center;
+            font-family: 'Tahoma', sans-serif; margin: 0; padding: 10px;
+            display: flex; flex-direction: column; align-items: center; min-height: 100vh;
         }
-
-        .header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-            padding: 0 5px;
-        }
-        .header-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #fff;
-        }
-        .close-btn {
-            background: none;
-            border: none;
-            color: #fff;
-            font-size: 16px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .admin-toggle-btn {
-            background: #d4af37;
-            border: none;
-            color: #0b1c2d;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 12px;
-            font-weight: bold;
-            cursor: pointer;
-        }
+        .header { width: 100%; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; padding: 0 5px; }
+        .header-title { font-size: 18px; font-weight: bold; color: #fff; }
+        .close-btn { background: none; border: none; color: #fff; font-size: 16px; cursor: pointer; display: flex; align-items: center; gap: 5px; }
 
         .user-card {
-            background: #112840;
-            border: 1px solid #1a3c5e;
-            border-radius: 12px;
-            padding: 10px;
-            width: 100%;
-            max-width: 380px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            background: #112840; border: 1px solid #1a3c5e; border-radius: 12px;
+            padding: 12px; width: 100%; max-width: 380px; margin-bottom: 12px;
+            display: flex; justify-content: space-between; align-items: center;
         }
         .user-info { text-align: right; }
         .user-name { font-size: 14px; font-weight: bold; color: #fff; }
         .user-id { font-size: 11px; color: #8da4c4; margin-top: 2px; }
-        .user-balance { font-size: 11px; color: #8da4c4; margin-top: 4px; }
+        .user-balance { font-size: 11px; color: #8da4c4; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
+        .user-balance span { color: #d4af37; font-weight: bold; }
         .user-avatar {
-            width: 40px; height: 40px; background: #3b63db; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px; font-weight: bold; color: #fff; border: 2px solid #5275e0;
+            width: 45px; height: 45px; background: #3b63db; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 16px;
+            font-weight: bold; color: #fff; border: 2px solid #5275e0;
         }
-
-        /* لوحة التحكم (Admin Panel) */
-        .admin-panel {
-            background: #15324d;
-            border: 2px solid #d4af37;
-            border-radius: 12px;
-            padding: 12px;
-            width: 100%;
-            max-width: 380px;
-            margin-bottom: 12px;
-            display: none; /* مخفية افتراضياً وتظهر عبر زر الأدمن */
-            text-align: right;
-        }
-        .admin-panel h3 {
-            margin: 0 0 10px 0;
-            font-size: 14px;
-            color: #d4af37;
-            text-align: center;
-            border-bottom: 1px solid rgba(212,175,55,0.3);
-            padding-bottom: 5px;
-        }
-        .admin-control-group {
-            margin-bottom: 8px;
-            font-size: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .admin-control-group input[type="text"] {
-            width: 140px;
-            padding: 3px 6px;
-            background: #0b1c2d;
-            border: 1px solid #1a3c5e;
-            color: #fff;
-            border-radius: 4px;
-            font-size: 11px;
-        }
-        .admin-btn {
-            background: #19385c;
-            border: 1px solid #00c6ff;
-            color: #fff;
-            padding: 4px 8px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 11px;
-        }
-        .admin-btn.active-status { background: #28a745; border-color: #28a745; }
-        .admin-btn.off-status { background: #dc3545; border-color: #dc3545; }
 
         .deposit-alert {
-            background: rgba(212, 175, 55, 0.08);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 10px;
-            padding: 8px;
-            font-size: 12px;
-            color: #e6cb6d;
-            margin-bottom: 10px;
-            width: 100%;
-            max-width: 380px;
-            text-align: center;
+            background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px; padding: 10px; font-size: 13px; color: #e6cb6d;
+            margin-bottom: 15px; width: 100%; max-width: 380px; text-align: center;
         }
 
         .wheel-section {
-            background: #112840;
-            border: 1px solid #1a3c5e;
-            border-radius: 14px;
-            padding: 12px 10px;
-            width: 100%;
-            max-width: 380px;
-            margin-bottom: 10px;
-            position: relative;
+            background: #112840; border: 1px solid #1a3c5e; border-radius: 14px;
+            padding: 15px 10px; width: 100%; max-width: 380px; margin-bottom: 15px; position: relative;
         }
-
-        .wheel-container {
-            position: relative;
-            width: 270px;
-            height: 270px;
-            margin: 0 auto;
-        }
-
+        .wheel-container { position: relative; width: 290px; height: 290px; margin: 0 auto; }
         .wheel-border {
-            position: absolute;
-            width: 100%; height: 100%; border-radius: 50%;
-            border: 6px dashed rgba(0, 198, 255, 0.35);
-            box-sizing: border-box; pointer-events: none; z-index: 5;
+            position: absolute; width: 100%; height: 100%; border-radius: 50%;
+            border: 6px dashed rgba(0, 198, 255, 0.35); box-sizing: border-box; pointer-events: none; z-index: 5;
         }
-
         .pointer {
             position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-            width: 0; height: 0; border-left: 10px solid transparent;
-            border-right: 10px solid transparent; border-top: 20px solid #00c6ff;
-            z-index: 25; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+            width: 0; height: 0; border-left: 10px solid transparent; border-right: 10px solid transparent;
+            border-top: 20px solid #00c6ff; z-index: 25; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
         }
-
         #wheelWrapper {
             position: absolute; width: 100%; height: 100%; border-radius: 50%;
             overflow: hidden; will-change: transform; border: 5px solid #0d2235;
         }
-
         #wheelCanvas { width: 100%; height: 100%; border-radius: 50%; }
 
         .spin-btn {
             position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 65px; height: 65px; background: radial-gradient(circle, #2a4f78, #133152);
-            color: #fff; border: 3px solid #00c6ff; border-radius: 50%;
-            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 20;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            width: 70px; height: 70px; background: radial-gradient(circle, #2a4f78, #133152);
+            color: #fff; border: 3px solid #00c6ff; border-radius: 50%; font-size: 16px;
+            font-weight: bold; cursor: pointer; z-index: 20; box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+            display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.2;
         }
-        .spin-btn span { font-size: 9px; color: #a0bed8; margin-top: 2px; }
+        .spin-btn span { font-size: 10px; color: #a0bed8; font-weight: normal; margin-top: 2px; }
         .spin-btn:active { transform: translate(-50%, -50%) scale(0.95); }
         .spin-btn.disabled { opacity: 0.7; cursor: not-allowed; }
 
         .stats-section {
             background: #112840; border: 1px solid #1a3c5e; border-radius: 14px;
-            padding: 10px; width: 100%; max-width: 380px; box-sizing: border-box; margin-bottom: 15px;
+            padding: 12px; width: 100%; max-width: 380px; box-sizing: border-box; margin-bottom: 20px;
         }
-        .stats-header {
-            display: flex; justify-content: space-between; align-items: center;
-            font-size: 13px; font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid #1a3c5e; padding-bottom: 6px;
-        }
-        .stats-table-head { display: flex; justify-content: space-between; font-size: 10px; color: #6c86a8; }
-        .stats-empty { color: #6c86a8; font-size: 11px; padding: 15px 0; text-align: center; }
+        .stats-header { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: bold; margin-bottom: 10px; border-bottom: 1px solid #1a3c5e; padding-bottom: 8px; }
+        .stats-table-head { display: flex; justify-content: space-between; font-size: 11px; color: #6c86a8; }
+        .stats-empty { color: #6c86a8; font-size: 12px; padding: 20px 0; text-align: center; }
     </style>
 </head>
 <body>
@@ -213,45 +87,22 @@
     <div class="header">
         <button class="close-btn" onclick="tg.close()"><i class="fas fa-times"></i> إغلاق</button>
         <div class="header-title">عجلة LAMIN</div>
-        <button class="admin-toggle-btn" onclick="toggleAdminPanel()">لوحة التحكم</button>
-    </div>
-
-    <!-- لوحة التحكم للإدارة -->
-    <div class="admin-panel" id="adminPanel">
-        <h3>⚙️ لوحة تحكم عجلة الحظ</h3>
-        
-        <div class="admin-control-group">
-            <span>حالة العجلة:</span>
-            <button id="wheelToggleBtn" class="admin-btn active-status" onclick="toggleWheelStatus()">العجلة مفعلة</button>
-        </div>
-
-        <div class="admin-control-group">
-            <span>نظام الأرباح:</span>
-            <button id="profitToggleBtn" class="admin-btn active-status" onclick="toggleProfitStatus()">الأرباح مفعلة</button>
-        </div>
-
-        <div class="admin-control-group">
-            <span>تغيير النسبة المئوية:</span>
-            <div style="display: flex; gap: 4px;">
-                <input type="text" id="percentInput" value="15% بونص">
-                <button class="admin-btn" onclick="updatePercent()">تحديث</button>
-            </div>
-        </div>
-
-        <div class="admin-control-group" style="flex-direction: column; align-items: flex-start; gap: 5px;">
-            <span>تغيير الجوائز (افصل بينها بفاصلة ,):</span>
-            <input type="text" id="prizesInput" value="100, 200, 300, 400, حظ أوفراً, إعادة تدوير, 15% بونص" style="width: 100%;">
-            <button class="admin-btn" onclick="updatePrizes()" style="width: 100%;">تحديث خانات العجلة بالكامل</button>
-        </div>
+        <div></div>
     </div>
 
     <div class="user-card">
         <div class="user-info">
-            <div class="user-name">Ali Rs</div>
+            <div class="user-name" id="userName">Ali Rs</div>
             <div class="user-id">معرف تلغرام: <span id="tgId">8573278961</span></div>
-            <div class="user-balance"><i class="fas fa-wallet"></i> رصيد البوت: <span>NSP 0</span></div>
+            <div class="user-balance">
+                <i class="fas fa-wallet"></i> رصيد المحفظة: <span id="userBalance">0</span> NSP
+            </div>
         </div>
-        <div class="user-avatar">AR</div>
+        <div class="user-avatar" id="userAvatar">AR</div>
+    </div>
+
+    <div class="deposit-alert" id="promoAlert" style="display:none;">
+        🎉 مبروك تفعيل النسبة المئوية الإضافية! قم بإتمام شحن محفظتك خلال <span id="timeLeft">24:00:00</span> لتأكيدها.
     </div>
 
     <div class="deposit-alert">
@@ -284,32 +135,41 @@
             <span>النتيجة</span>
             <span>NSP</span>
         </div>
-        <div class="stats-empty">لا توجد نتائج بعد.</div>
+        <div class="stats-empty" id="statsList">لا توجد نتائج بعد.</div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
 
+        let userId = "8573278961";
+        let userName = "Ali Rs";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-            document.getElementById('tgId').innerText = tg.initDataUnsafe.user.id;
+            userId = tg.initDataUnsafe.user.id;
+            userName = tg.initDataUnsafe.user.first_name || "مستخدم";
+            document.getElementById('tgId').innerText = userId;
+            document.getElementById('userName').innerText = userName;
+            document.getElementById('userAvatar').innerText = userName.substring(0, 2).toUpperCase();
         }
+
+        // جلب البيانات من الـ LocalStorage (المرتبطة بحساب المستخدم)
+        let userWallet = parseInt(localStorage.getItem(`wallet_${userId}`)) || 0;
+        document.getElementById('userBalance').innerText = userWallet;
+
+        // فحص حالة النسبة المئوية المؤقتة (24 ساعة)
+        checkPromoStatus();
 
         const canvas = document.getElementById("wheelCanvas");
         const ctx = canvas.getContext("2d");
         const wheelWrapper = document.getElementById("wheelWrapper");
         const spinBtn = document.getElementById("spinBtn");
 
-        // متغيرات التحكم من لوحة الأدمن
-        let isWheelEnabled = true;
-        let isProfitEnabled = true;
-
-        // قائمة الجوائز الأساسية
-        let sectors = [
+        // جلب الإعدادات المحدثة من الأدمن إن وجدت أو استخدام الافتراضية
+        let sectors = JSON.parse(localStorage.getItem('admin_sectors')) || [
             { text: "100", color: "#133152", textColor: "#fff" },
             { text: "200", color: "#1c4470", textColor: "#fff" },
             { text: "300", color: "#133152", textColor: "#fff" },
-            { text: "400", color: "#133152", textColor: "#fff" },
+            { text: "400", color: "#1c4470", textColor: "#fff" },
             { text: "حظ أوفراً", color: "#133152", textColor: "#fff" },
             { text: "إعادة تدوير", color: "#1c4470", textColor: "#fff" },
             { text: "15% بونص", color: "#1c4470", textColor: "#fff" }
@@ -356,83 +216,14 @@
 
         drawWheel();
 
-        // إظهار وإخفاء لوحة التحكم
-        function toggleAdminPanel() {
-            const panel = document.getElementById('adminPanel');
-            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
-        }
-
-        // زر إيقاف / تشغيل العجلة
-        function toggleWheelStatus() {
-            isWheelEnabled = !isWheelEnabled;
-            const btn = document.getElementById('wheelToggleBtn');
-            if (isWheelEnabled) {
-                btn.innerText = "العجلة مفعلة";
-                btn.className = "admin-btn active-status";
-            } else {
-                btn.innerText = "العجلة متوقفة";
-                btn.className = "admin-btn off-status";
-            }
-        }
-
-        // زر تفعيل / إيقاف ربح العجلة
-        function toggleProfitStatus() {
-            isProfitEnabled = !isProfitEnabled;
-            const btn = document.getElementById('profitToggleBtn');
-            if (isProfitEnabled) {
-                btn.innerText = "الأرباح مفعلة";
-                btn.className = "admin-btn active-status";
-            } else {
-                btn.innerText = "الأرباح متوقفة (حظ أوفراً دائماً)";
-                btn.className = "admin-btn off-status";
-            }
-        }
-
-        // زر تغيير النسبة المئوية
-        function updatePercent() {
-            const newPercent = document.getElementById('percentInput').value;
-            // البحث عن عنصر النسبة المئوية وتحديثه
-            let found = false;
-            sectors.forEach(sec => {
-                if (sec.text.includes('%') || sec.text.includes('بونص')) {
-                    sec.text = newPercent;
-                    found = true;
-                }
-            });
-            if(!found && sectors.length > 0) {
-                sectors[sectors.length - 1].text = newPercent;
-            }
-            drawWheel();
-            tg.showAlert("تم تحديث النسبة المئوية بنجاح!");
-        }
-
-        // زر تغيير الجوائز وخانات العجلة بالكامل
-        function updatePrizes() {
-            const inputVal = document.getElementById('prizesInput').value;
-            const prizesArray = inputVal.split(',').map(item => item.trim()).filter(item => item !== '');
-            
-            if (prizesArray.length < 2) {
-                tg.showAlert("الرجاء إدخال جائزتين على الأقل مفصولتين بفاصلة!");
-                return;
-            }
-
-            sectors = prizesArray.map((prize, index) => {
-                return {
-                    text: prize,
-                    color: index % 2 === 0 ? "#133152" : "#1c4470",
-                    textColor: "#fff"
-                };
-            });
-
-            drawWheel();
-            tg.showAlert("تم تحديث خانات العجلة بالكامل بنجاح!");
-        }
-
         function spinWheel() {
-            if (!isWheelEnabled) {
-                tg.showAlert("⚠️ العجلة متوقفة حالياً من قبل الإدارة.");
+            // التحقق من حالة العجلة في الإدارة
+            const adminWheelStatus = localStorage.getItem('admin_wheel_enabled');
+            if (adminWheelStatus === 'false') {
+                tg.showAlert("⚠️ العجلة متوقفة مؤقتاً من قبل الإدارة.");
                 return;
             }
+
             if (isSpinning) return;
             isSpinning = true;
             spinBtn.classList.add("disabled");
@@ -440,8 +231,8 @@
             const numSectors = sectors.length;
             let winningIndex;
 
-            // إذا تم إيقاف الربح، ستستقر العجلة دائماً على "حظ أوفراً" أو أول عنصر مشابه، وإلا فعشوائي
-            if (!isProfitEnabled) {
+            const adminProfitStatus = localStorage.getItem('admin_profit_enabled');
+            if (adminProfitStatus === 'false') {
                 winningIndex = sectors.findIndex(s => s.text.includes("حظ") || s.text.includes("أوفر"));
                 if (winningIndex === -1) winningIndex = 0;
             } else {
@@ -463,9 +254,70 @@
                 onComplete: () => {
                     isSpinning = false;
                     spinBtn.classList.remove("disabled");
-                    tg.showAlert(`🎉 مبروك! لقد فزت بـ: ${winningPrize}`);
+
+                    // معالجة نتيجة الجائزة
+                    if (winningPrize.includes("حظ") || winningPrize.includes("أوفر")) {
+                        tg.showAlert("حظ أوفراً");
+                    } else {
+                        tg.showAlert(`🎉 مبروك! لقد فزت بـ: ${winningPrize}`);
+                        
+                        // إذا كانت الجائزة أرقام، أضفها لمحفظة البوت
+                        let prizeValue = parseInt(winningPrize.replace(/\D/g, ''));
+                        if (!isNaN(prizeValue) && prizeValue > 0) {
+                            userWallet += prizeValue;
+                            localStorage.setItem(`wallet_${userId}`, userWallet);
+                            document.getElementById('userBalance').innerText = userWallet;
+                        }
+
+                        // إذا كانت النسبة المئوية، تفعيلها لـ 24 ساعة للمستخدم الحالي
+                        if (winningPrize.includes('%') || winningPrize.includes('بونص')) {
+                            activatePromoBonus();
+                        }
+                    }
+
+                    // إضافة السجل للإحصائيات
+                    addStatRecord(winningPrize);
                 }
             });
+        }
+
+        function activatePromoBonus() {
+            const expireTime = new Date().getTime() + (24 * 60 * 60 * 1000); // 24 ساعة قادمة
+            localStorage.setItem(`promo_expire_${userId}`, expireTime);
+            localStorage.setItem(`promo_active_${userId}`, 'true');
+            checkPromoStatus();
+        }
+
+        function checkPromoStatus() {
+            const isPromoActive = localStorage.getItem(`promo_active_${userId}`);
+            const expireTime = localStorage.getItem(`promo_expire_${userId}`);
+            const alertBox = document.getElementById('promoAlert');
+
+            if (isPromoActive === 'true' && expireTime) {
+                const now = new Date().getTime();
+                if (now < expireTime) {
+                    alertBox.style.display = 'block';
+                    // يمكنك محاكاة شحن المحفظة هنا لربط شرط الشحن
+                } else {
+                    // انتهت الـ 24 ساعة ولم يشحن -> العودة للنسبة الأساسية
+                    localStorage.removeItem(`promo_active_${userId}`);
+                    localStorage.removeItem(`promo_expire_${userId}`);
+                    alertBox.style.display = 'none';
+                }
+            } else {
+                alertBox.style.display = 'none';
+            }
+        }
+
+        function addStatRecord(prize) {
+            const list = document.getElementById('statsList');
+            if (list.innerText.includes("لا توجد نتائج")) list.innerHTML = "";
+            const now = new Date().toLocaleTimeString('ar-SY', {hour: '2-digit', minute:'2-digit'});
+            
+            const row = document.createElement('div');
+            row.style.cssText = "display: flex; justify-content: space-between; font-size: 11px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff;";
+            row.innerHTML = `<span>${now}</span><span>${prize}</span><span>مكتمل</span>`;
+            list.prepend(row);
         }
     </script>
 </body>

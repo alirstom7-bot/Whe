@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>عجلة الحظ - ali</title>
+    <title>عجلة الحظ مع لوحة التحكم - LAMIN</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -33,14 +33,13 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             padding: 0 5px;
         }
         .header-title {
             font-size: 18px;
             font-weight: bold;
             color: #fff;
-            letter-spacing: 0.5px;
         }
         .close-btn {
             background: none;
@@ -52,9 +51,14 @@
             align-items: center;
             gap: 5px;
         }
-        .menu-dots {
-            color: #fff;
-            font-size: 18px;
+        .admin-toggle-btn {
+            background: #d4af37;
+            border: none;
+            color: #0b1c2d;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
             cursor: pointer;
         }
 
@@ -62,61 +66,80 @@
             background: #112840;
             border: 1px solid #1a3c5e;
             border-radius: 12px;
-            padding: 12px;
+            padding: 10px;
             width: 100%;
             max-width: 380px;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-        .user-info {
+        .user-info { text-align: right; }
+        .user-name { font-size: 14px; font-weight: bold; color: #fff; }
+        .user-id { font-size: 11px; color: #8da4c4; margin-top: 2px; }
+        .user-balance { font-size: 11px; color: #8da4c4; margin-top: 4px; }
+        .user-avatar {
+            width: 40px; height: 40px; background: #3b63db; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px; font-weight: bold; color: #fff; border: 2px solid #5275e0;
+        }
+
+        /* لوحة التحكم (Admin Panel) */
+        .admin-panel {
+            background: #15324d;
+            border: 2px solid #d4af37;
+            border-radius: 12px;
+            padding: 12px;
+            width: 100%;
+            max-width: 380px;
+            margin-bottom: 12px;
+            display: none; /* مخفية افتراضياً وتظهر عبر زر الأدمن */
             text-align: right;
         }
-        .user-name {
+        .admin-panel h3 {
+            margin: 0 0 10px 0;
             font-size: 14px;
-            font-weight: bold;
-            color: #fff;
+            color: #d4af37;
+            text-align: center;
+            border-bottom: 1px solid rgba(212,175,55,0.3);
+            padding-bottom: 5px;
         }
-        .user-id {
-            font-size: 11px;
-            color: #8da4c4;
-            margin-top: 2px;
-        }
-        .user-balance {
-            font-size: 11px;
-            color: #8da4c4;
-            margin-top: 6px;
+        .admin-control-group {
+            margin-bottom: 8px;
+            font-size: 12px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 4px;
         }
-        .user-balance span {
+        .admin-control-group input[type="text"] {
+            width: 140px;
+            padding: 3px 6px;
+            background: #0b1c2d;
+            border: 1px solid #1a3c5e;
             color: #fff;
-            font-weight: bold;
+            border-radius: 4px;
+            font-size: 11px;
         }
-        .user-avatar {
-            width: 45px;
-            height: 45px;
-            background: #3b63db;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            font-weight: bold;
+        .admin-btn {
+            background: #19385c;
+            border: 1px solid #00c6ff;
             color: #fff;
-            border: 2px solid #5275e0;
+            padding: 4px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 11px;
         }
+        .admin-btn.active-status { background: #28a745; border-color: #28a745; }
+        .admin-btn.off-status { background: #dc3545; border-color: #dc3545; }
 
         .deposit-alert {
             background: rgba(212, 175, 55, 0.08);
             border: 1px solid rgba(212, 175, 55, 0.3);
             border-radius: 10px;
-            padding: 10px;
-            font-size: 13px;
+            padding: 8px;
+            font-size: 12px;
             color: #e6cb6d;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             width: 100%;
             max-width: 380px;
             text-align: center;
@@ -126,176 +149,116 @@
             background: #112840;
             border: 1px solid #1a3c5e;
             border-radius: 14px;
-            padding: 15px 10px;
+            padding: 12px 10px;
             width: 100%;
             max-width: 380px;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
             position: relative;
-        }
-
-        .wheel-section-title {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 5px;
         }
 
         .wheel-container {
             position: relative;
-            width: 290px;
-            height: 290px;
+            width: 270px;
+            height: 270px;
             margin: 0 auto;
         }
 
         .wheel-border {
             position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
+            width: 100%; height: 100%; border-radius: 50%;
             border: 6px dashed rgba(0, 198, 255, 0.35);
-            box-sizing: border-box;
-            pointer-events: none;
-            z-index: 5;
+            box-sizing: border-box; pointer-events: none; z-index: 5;
         }
 
         .pointer {
-            position: absolute;
-            top: -12px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 0;
-            height: 0;
-            border-left: 10px solid transparent;
-            border-right: 10px solid transparent;
-            border-top: 20px solid #00c6ff;
-            z-index: 25;
-            filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
+            position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+            width: 0; height: 0; border-left: 10px solid transparent;
+            border-right: 10px solid transparent; border-top: 20px solid #00c6ff;
+            z-index: 25; filter: drop-shadow(0 2px 3px rgba(0,0,0,0.5));
         }
 
         #wheelWrapper {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            overflow: hidden;
-            will-change: transform;
-            border: 5px solid #0d2235;
+            position: absolute; width: 100%; height: 100%; border-radius: 50%;
+            overflow: hidden; will-change: transform; border: 5px solid #0d2235;
         }
 
-        #wheelCanvas {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-        }
+        #wheelCanvas { width: 100%; height: 100%; border-radius: 50%; }
 
         .spin-btn {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 70px;
-            height: 70px;
-            background: radial-gradient(circle, #2a4f78, #133152);
-            color: #fff;
-            border: 3px solid #00c6ff;
-            border-radius: 50%;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 20;
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 65px; height: 65px; background: radial-gradient(circle, #2a4f78, #133152);
+            color: #fff; border: 3px solid #00c6ff; border-radius: 50%;
+            font-size: 15px; font-weight: bold; cursor: pointer; z-index: 20;
             box-shadow: 0 4px 12px rgba(0,0,0,0.6);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            line-height: 1.2;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
         }
-        .spin-btn span {
-            font-size: 10px;
-            color: #a0bed8;
-            font-weight: normal;
-            margin-top: 2px;
-        }
+        .spin-btn span { font-size: 9px; color: #a0bed8; margin-top: 2px; }
         .spin-btn:active { transform: translate(-50%, -50%) scale(0.95); }
         .spin-btn.disabled { opacity: 0.7; cursor: not-allowed; }
 
         .stats-section {
-            background: #112840;
-            border: 1px solid #1a3c5e;
-            border-radius: 14px;
-            padding: 12px;
-            width: 100%;
-            max-width: 380px;
-            box-sizing: border-box;
-            margin-bottom: 20px;
+            background: #112840; border: 1px solid #1a3c5e; border-radius: 14px;
+            padding: 10px; width: 100%; max-width: 380px; box-sizing: border-box; margin-bottom: 15px;
         }
         .stats-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #1a3c5e;
-            padding-bottom: 8px;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 13px; font-weight: bold; margin-bottom: 8px; border-bottom: 1px solid #1a3c5e; padding-bottom: 6px;
         }
-        .stats-date-btn {
-            background: #19385c;
-            border: none;
-            color: #8da4c4;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 12px;
-        }
-        .stats-table-head {
-            display: flex;
-            justify-content: space-between;
-            font-size: 11px;
-            color: #6c86a8;
-            padding: 4px 0;
-        }
-        .stats-empty {
-            color: #6c86a8;
-            font-size: 12px;
-            padding: 20px 0;
-            text-align: center;
-        }
+        .stats-table-head { display: flex; justify-content: space-between; font-size: 10px; color: #6c86a8; }
+        .stats-empty { color: #6c86a8; font-size: 11px; padding: 15px 0; text-align: center; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <button class="close-btn" onclick="tg.close()">
-            <i class="fas fa-times"></i> إغلاق
-        </button>
+        <button class="close-btn" onclick="tg.close()"><i class="fas fa-times"></i> إغلاق</button>
         <div class="header-title">عجلة LAMIN</div>
-        <i class="fas fa-ellipsis-v menu-dots"></i>
+        <button class="admin-toggle-btn" onclick="toggleAdminPanel()">لوحة التحكم</button>
+    </div>
+
+    <!-- لوحة التحكم للإدارة -->
+    <div class="admin-panel" id="adminPanel">
+        <h3>⚙️ لوحة تحكم عجلة الحظ</h3>
+        
+        <div class="admin-control-group">
+            <span>حالة العجلة:</span>
+            <button id="wheelToggleBtn" class="admin-btn active-status" onclick="toggleWheelStatus()">العجلة مفعلة</button>
+        </div>
+
+        <div class="admin-control-group">
+            <span>نظام الأرباح:</span>
+            <button id="profitToggleBtn" class="admin-btn active-status" onclick="toggleProfitStatus()">الأرباح مفعلة</button>
+        </div>
+
+        <div class="admin-control-group">
+            <span>تغيير النسبة المئوية:</span>
+            <div style="display: flex; gap: 4px;">
+                <input type="text" id="percentInput" value="15% بونص">
+                <button class="admin-btn" onclick="updatePercent()">تحديث</button>
+            </div>
+        </div>
+
+        <div class="admin-control-group" style="flex-direction: column; align-items: flex-start; gap: 5px;">
+            <span>تغيير الجوائز (افصل بينها بفاصلة ,):</span>
+            <input type="text" id="prizesInput" value="100, 200, 300, 400, حظ أوفراً, إعادة تدوير, 15% بونص" style="width: 100%;">
+            <button class="admin-btn" onclick="updatePrizes()" style="width: 100%;">تحديث خانات العجلة بالكامل</button>
+        </div>
     </div>
 
     <div class="user-card">
         <div class="user-info">
             <div class="user-name">Ali Rs</div>
             <div class="user-id">معرف تلغرام: <span id="tgId">8573278961</span></div>
-            <div class="user-balance">
-                <i class="fas fa-wallet"></i> رصيد البوت: <span>NSP 0</span>
-            </div>
+            <div class="user-balance"><i class="fas fa-wallet"></i> رصيد البوت: <span>NSP 0</span></div>
         </div>
         <div class="user-avatar">AR</div>
     </div>
 
     <div class="deposit-alert">
-        تحتاج إلى إيداع 50,000 NSP للحصول على لفة اليوم.
+        تحتاج إلى إيداع 30,000 NSP للحصول على لفة اليوم.
     </div>
 
     <div class="wheel-section">
-        <div class="wheel-section-title">
-            <span>العجلة</span>
-            <i class="fas fa-question-circle" style="font-size: 14px; color: #6c86a8;"></i>
-        </div>
-
         <div class="wheel-container">
             <div class="pointer"></div>
             <div class="wheel-border"></div>
@@ -314,7 +277,7 @@
     <div class="stats-section">
         <div class="stats-header">
             <span>إحصائياتك</span>
-            <button class="stats-date-btn">إحصائيات شهر 10-2026 ▼</button>
+            <span style="font-size: 11px; color: #8da4c4;">شهر 10-2026</span>
         </div>
         <div class="stats-table-head">
             <span>الوقت</span>
@@ -337,15 +300,21 @@
         const wheelWrapper = document.getElementById("wheelWrapper");
         const spinBtn = document.getElementById("spinBtn");
 
-        const sectors = [
-            { text: "1,000", color: "#133152", textColor: "#fff" },
-            { text: "2,000", color: "#1c4470", textColor: "#fff" },
-            { text: "5% بونص", color: "#133152", textColor: "#fff" },
-            { text: "حظ أوفراً", color: "#1c4470", textColor: "#fff" }
+        // متغيرات التحكم من لوحة الأدمن
+        let isWheelEnabled = true;
+        let isProfitEnabled = true;
+
+        // قائمة الجوائز الأساسية
+        let sectors = [
+            { text: "100", color: "#133152", textColor: "#fff" },
+            { text: "200", color: "#1c4470", textColor: "#fff" },
+            { text: "300", color: "#133152", textColor: "#fff" },
+            { text: "400", color: "#133152", textColor: "#fff" },
+            { text: "حظ أوفراً", color: "#133152", textColor: "#fff" },
+            { text: "إعادة تدوير", color: "#1c4470", textColor: "#fff" },
+            { text: "15% بونص", color: "#1c4470", textColor: "#fff" }
         ];
 
-        const numSectors = sectors.length;
-        const arc = (2 * Math.PI) / numSectors;
         let currentRotation = 0;
         let isSpinning = false;
 
@@ -353,6 +322,8 @@
             const centerX = canvas.width / 2;
             const centerY = canvas.height / 2;
             const radius = canvas.width / 2;
+            const numSectors = sectors.length;
+            const arc = (2 * Math.PI) / numSectors;
 
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -376,8 +347,8 @@
 
                 ctx.textAlign = "right";
                 ctx.fillStyle = sector.textColor;
-                ctx.font = "bold 24px Tahoma";
-                ctx.fillText(sector.text, radius - 80, 8);
+                ctx.font = "bold 20px Tahoma";
+                ctx.fillText(sector.text, radius - 70, 7);
 
                 ctx.restore();
             });
@@ -385,16 +356,101 @@
 
         drawWheel();
 
+        // إظهار وإخفاء لوحة التحكم
+        function toggleAdminPanel() {
+            const panel = document.getElementById('adminPanel');
+            panel.style.display = panel.style.display === 'block' ? 'none' : 'block';
+        }
+
+        // زر إيقاف / تشغيل العجلة
+        function toggleWheelStatus() {
+            isWheelEnabled = !isWheelEnabled;
+            const btn = document.getElementById('wheelToggleBtn');
+            if (isWheelEnabled) {
+                btn.innerText = "العجلة مفعلة";
+                btn.className = "admin-btn active-status";
+            } else {
+                btn.innerText = "العجلة متوقفة";
+                btn.className = "admin-btn off-status";
+            }
+        }
+
+        // زر تفعيل / إيقاف ربح العجلة
+        function toggleProfitStatus() {
+            isProfitEnabled = !isProfitEnabled;
+            const btn = document.getElementById('profitToggleBtn');
+            if (isProfitEnabled) {
+                btn.innerText = "الأرباح مفعلة";
+                btn.className = "admin-btn active-status";
+            } else {
+                btn.innerText = "الأرباح متوقفة (حظ أوفراً دائماً)";
+                btn.className = "admin-btn off-status";
+            }
+        }
+
+        // زر تغيير النسبة المئوية
+        function updatePercent() {
+            const newPercent = document.getElementById('percentInput').value;
+            // البحث عن عنصر النسبة المئوية وتحديثه
+            let found = false;
+            sectors.forEach(sec => {
+                if (sec.text.includes('%') || sec.text.includes('بونص')) {
+                    sec.text = newPercent;
+                    found = true;
+                }
+            });
+            if(!found && sectors.length > 0) {
+                sectors[sectors.length - 1].text = newPercent;
+            }
+            drawWheel();
+            tg.showAlert("تم تحديث النسبة المئوية بنجاح!");
+        }
+
+        // زر تغيير الجوائز وخانات العجلة بالكامل
+        function updatePrizes() {
+            const inputVal = document.getElementById('prizesInput').value;
+            const prizesArray = inputVal.split(',').map(item => item.trim()).filter(item => item !== '');
+            
+            if (prizesArray.length < 2) {
+                tg.showAlert("الرجاء إدخال جائزتين على الأقل مفصولتين بفاصلة!");
+                return;
+            }
+
+            sectors = prizesArray.map((prize, index) => {
+                return {
+                    text: prize,
+                    color: index % 2 === 0 ? "#133152" : "#1c4470",
+                    textColor: "#fff"
+                };
+            });
+
+            drawWheel();
+            tg.showAlert("تم تحديث خانات العجلة بالكامل بنجاح!");
+        }
+
         function spinWheel() {
+            if (!isWheelEnabled) {
+                tg.showAlert("⚠️ العجلة متوقفة حالياً من قبل الإدارة.");
+                return;
+            }
             if (isSpinning) return;
             isSpinning = true;
             spinBtn.classList.add("disabled");
 
-            const winningIndex = Math.floor(Math.random() * numSectors);
+            const numSectors = sectors.length;
+            let winningIndex;
+
+            // إذا تم إيقاف الربح، ستستقر العجلة دائماً على "حظ أوفراً" أو أول عنصر مشابه، وإلا فعشوائي
+            if (!isProfitEnabled) {
+                winningIndex = sectors.findIndex(s => s.text.includes("حظ") || s.text.includes("أوفر"));
+                if (winningIndex === -1) winningIndex = 0;
+            } else {
+                winningIndex = Math.floor(Math.random() * numSectors);
+            }
+
             const winningPrize = sectors[winningIndex].text;
 
             const degreesPerSector = 360 / numSectors;
-            // إضافة نصف زاوية القسم (45 درجة) لضمان الاستقرار في منتصف القسم تماماً بعيداً عن الخطوط
             const targetAngle = 360 - (winningIndex * degreesPerSector) - (degreesPerSector / 2);
             
             const extraSpins = 360 * 6;

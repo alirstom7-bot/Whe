@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>عجلة الحظ - LAMIN</title>
+    <title>عجلة الحظ - ali</title>
     
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -337,7 +337,6 @@
         const wheelWrapper = document.getElementById("wheelWrapper");
         const spinBtn = document.getElementById("spinBtn");
 
-        // الأقسام الأربعة الجديدة
         const sectors = [
             { text: "1,000", color: "#133152", textColor: "#fff" },
             { text: "2,000", color: "#1c4470", textColor: "#fff" },
@@ -358,7 +357,8 @@
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             sectors.forEach((sector, i) => {
-                const angle = i * arc;
+                // إزاحة زاوية البداية بـ -90 درجة (- Math.PI / 2) لتبدأ الأقسام من الأعلى تماماً تحت المؤشر
+                const angle = i * arc - Math.PI / 2;
 
                 ctx.beginPath();
                 ctx.fillStyle = sector.color;
@@ -395,11 +395,11 @@
             const winningIndex = Math.floor(Math.random() * numSectors);
             const winningPrize = sectors[winningIndex].text;
 
-            // 2. حساب الزاوية بدقة تامة للأقسام الأربعة لضمان التطابق الفعلي تحت المؤشر العلوي
+            // 2. حساب زاوية التوقف بدقة متناهية لتطابق القسم المستهدف تماماً تحت المؤشر العلوي
             const degreesPerSector = 360 / numSectors;
-            const targetAngle = 360 - (winningIndex * degreesPerSector) - (degreesPerSector / 2);
+            const targetAngle = 360 - (winningIndex * degreesPerSector);
             
-            const extraSpins = 360 * 6; // 6 لفات كاملة
+            const extraSpins = 360 * 6; // 6 لفات كاملة للإثارة
             currentRotation = currentRotation + (extraSpins - (currentRotation % 360)) + targetAngle;
 
             gsap.to(wheelWrapper, {

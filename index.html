@@ -92,21 +92,21 @@
 
     <div class="user-card">
         <div class="user-info">
-            <div class="user-name" id="userName">Ali Rs</div>
-            <div class="user-id">معرف تلغرام: <span id="tgId">8573278961</span></div>
+            <div class="user-name" id="userName">مستخدم</div>
+            <div class="user-id">معرف تلغرام: <span id="tgId">0</span></div>
             <div class="user-balance">
                 <i class="fas fa-wallet"></i> رصيد المحفظة: <span id="userBalance">0</span> NSP
             </div>
         </div>
-        <div class="user-avatar" id="userAvatar">AR</div>
+        <div class="user-avatar" id="userAvatar">US</div>
     </div>
 
     <div class="deposit-alert" id="promoAlert" style="display:none;">
-        🎉 مبروك تفعيل النسبة المئوية الإضافية! قم بإتمام شحن محفظتك خلال <span id="timeLeft">24:00:00</span> لتأكيدها.
+        🎉 مبروك تفعيل النسبة المئوية الإضافية! قم بإتمام شحن محفظتك خلال 24 ساعة لتأكيدها.
     </div>
 
     <div class="deposit-alert">
-        تحتاج إلى إيداع 30,000 NSP للحصول على لفة اليوم.
+        تحتاج إلى إيداع 500 ل.س أو أكثر للحصول على لفة اليوم.
     </div>
 
     <div class="wheel-section">
@@ -120,7 +120,7 @@
 
             <button class="spin-btn" id="spinBtn" onclick="spinWheel()">
                 لف
-                <span>لا توجد لفة</span>
+                <span>متوفرة</span>
             </button>
         </div>
     </div>
@@ -133,7 +133,7 @@
         <div class="stats-table-head">
             <span>الوقت</span>
             <span>النتيجة</span>
-            <span>NSP</span>
+            <span>الحالة</span>
         </div>
         <div class="stats-empty" id="statsList">لا توجد نتائج بعد.</div>
     </div>
@@ -142,8 +142,8 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
 
-        let userId = "8573278961";
-        let userName = "Ali Rs";
+        let userId = "0";
+        let userName = "مستخدم";
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             userId = tg.initDataUnsafe.user.id;
             userName = tg.initDataUnsafe.user.first_name || "مستخدم";
@@ -152,15 +152,9 @@
             document.getElementById('userAvatar').innerText = userName.substring(0, 2).toUpperCase();
         }
 
-        // قراءة الإعدادات المحدثة من رابط تليجرام وحفظها مؤقتاً
         const urlParams = new URLSearchParams(window.location.search);
-        
-        if (urlParams.has('enabled')) {
-            localStorage.setItem('admin_wheel_enabled', urlParams.get('enabled'));
-        }
-        if (urlParams.has('profit')) {
-            localStorage.setItem('admin_profit_enabled', urlParams.get('profit'));
-        }
+        if (urlParams.has('enabled')) localStorage.setItem('admin_wheel_enabled', urlParams.get('enabled'));
+        if (urlParams.has('profit')) localStorage.setItem('admin_profit_enabled', urlParams.get('profit'));
         if (urlParams.has('prizes')) {
             let prizesParam = urlParams.get('prizes');
             if (prizesParam) {
@@ -176,22 +170,20 @@
 
         let userWallet = parseInt(localStorage.getItem(`wallet_${userId}`)) || 0;
         document.getElementById('userBalance').innerText = userWallet;
-        checkPromoStatus();
 
         const canvas = document.getElementById("wheelCanvas");
         const ctx = canvas.getContext("2d");
         const wheelWrapper = document.getElementById("wheelWrapper");
         const spinBtn = document.getElementById("spinBtn");
 
-        // جلب الإعدادات المحدثة للعجلة
         let sectors = JSON.parse(localStorage.getItem('admin_sectors')) || [
             { text: "100", color: "#133152", textColor: "#fff" },
             { text: "200", color: "#1c4470", textColor: "#fff" },
             { text: "300", color: "#133152", textColor: "#fff" },
-            { text: "400", color: "#133152", textColor: "#fff" },
+            { text: "400", color: "#1c4470", textColor: "#fff" },
             { text: "حظ أوفراً", color: "#133152", textColor: "#fff" },
-            { text: "إعادة تدوير", color: "#133152", textColor: "#fff" },
-            { text: "15% بونص", color: "#133152", textColor: "#fff" }
+            { text: "إعادة تدوير", color: "#1c4470", textColor: "#fff" },
+            { text: "15% بونص", color: "#1c4470", textColor: "#fff" }
         ];
 
         let currentRotation = 0;
@@ -208,7 +200,6 @@
 
             sectors.forEach((sector, i) => {
                 const angle = i * arc - Math.PI / 2;
-
                 ctx.beginPath();
                 ctx.fillStyle = sector.color;
                 ctx.moveTo(centerX, centerY);
@@ -223,12 +214,10 @@
                 ctx.save();
                 ctx.translate(centerX, centerY);
                 ctx.rotate(angle + arc / 2);
-
                 ctx.textAlign = "right";
                 ctx.fillStyle = sector.textColor;
                 ctx.font = "bold 20px Tahoma";
                 ctx.fillText(sector.text, radius - 70, 7);
-
                 ctx.restore();
             });
         }
@@ -236,8 +225,7 @@
         drawWheel();
 
         function spinWheel() {
-            const adminWheelStatus = localStorage.getItem('admin_wheel_enabled');
-            if (adminWheelStatus === 'false') {
+            if (localStorage.getItem('admin_wheel_enabled') === 'false') {
                 tg.showAlert("⚠️ العجلة متوقفة مؤقتاً من قبل الإدارة.");
                 return;
             }
@@ -246,24 +234,18 @@
             isSpinning = true;
             spinBtn.classList.add("disabled");
 
-            const numSectors = sectors.length;
             let winningIndex;
-
-            const adminProfitStatus = localStorage.getItem('admin_profit_enabled');
-            if (adminProfitStatus === 'false') {
+            if (localStorage.getItem('admin_profit_enabled') === 'false') {
                 winningIndex = sectors.findIndex(s => s.text.includes("حظ") || s.text.includes("أوفر"));
                 if (winningIndex === -1) winningIndex = 0;
             } else {
-                winningIndex = Math.floor(Math.random() * numSectors);
+                winningIndex = Math.floor(Math.random() * sectors.length);
             }
 
             const winningPrize = sectors[winningIndex].text;
-
-            const degreesPerSector = 360 / numSectors;
+            const degreesPerSector = 360 / sectors.length;
             const targetAngle = 360 - (winningIndex * degreesPerSector) - (degreesPerSector / 2);
-            
-            const extraSpins = 360 * 6;
-            currentRotation = currentRotation + (extraSpins - (currentRotation % 360)) + targetAngle;
+            currentRotation = currentRotation + (360 * 6 - (currentRotation % 360)) + targetAngle;
 
             gsap.to(wheelWrapper, {
                 rotation: currentRotation,
@@ -274,51 +256,13 @@
                     spinBtn.classList.remove("disabled");
 
                     if (winningPrize.includes("حظ") || winningPrize.includes("أوفر")) {
-                        tg.showAlert("حظ أوفراً");
+                        tg.showAlert("حظ أوفراً! هارد لك في المرة القادمة.");
                     } else {
                         tg.showAlert(`🎉 مبروك! لقد فزت بـ: ${winningPrize}`);
-                        
-                        let prizeValue = parseInt(winningPrize.replace(/\D/g, ''));
-                        if (!isNaN(prizeValue) && prizeValue > 0) {
-                            userWallet += prizeValue;
-                            localStorage.setItem(`wallet_${userId}`, userWallet);
-                            document.getElementById('userBalance').innerText = userWallet;
-                        }
-
-                        if (winningPrize.includes('%') || winningPrize.includes('بونص')) {
-                            activatePromoBonus();
-                        }
                     }
-
                     addStatRecord(winningPrize);
                 }
             });
-        }
-
-        function activatePromoBonus() {
-            const expireTime = new Date().getTime() + (24 * 60 * 60 * 1000);
-            localStorage.setItem(`promo_expire_${userId}`, expireTime);
-            localStorage.setItem(`promo_active_${userId}`, 'true');
-            checkPromoStatus();
-        }
-
-        function checkPromoStatus() {
-            const isPromoActive = localStorage.getItem(`promo_active_${userId}`);
-            const expireTime = localStorage.getItem(`promo_expire_${userId}`);
-            const alertBox = document.getElementById('promoAlert');
-
-            if (isPromoActive === 'true' && expireTime) {
-                const now = new Date().getTime();
-                if (now < expireTime) {
-                    alertBox.style.display = 'block';
-                } else {
-                    localStorage.removeItem(`promo_active_${userId}`);
-                    localStorage.removeItem(`promo_expire_${userId}`);
-                    alertBox.style.display = 'none';
-                }
-            } else {
-                alertBox.style.display = 'none';
-            }
         }
 
         function addStatRecord(prize) {
@@ -328,7 +272,7 @@
             
             const row = document.createElement('div');
             row.style.cssText = "display: flex; justify-content: space-between; font-size: 11px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff;";
-            row.innerHTML = `<span>${now}</span><span>${prize}</span><span>مكتمل</span>`;
+            row.innerHTML = `<span>${now}</span><span>${prize}</span><span>قيد المراجعة</span>`;
             list.prepend(row);
         }
     </script>

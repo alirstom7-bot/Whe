@@ -313,3 +313,28 @@
     </script>
 </body>
 </html>
+// جلب الإعدادات الحالية من سيرفر Flask مباشرة
+async function fetchWheelSettings() {
+    try {
+        let response = await fetch('/api/wheel-settings');
+        let data = await response.json();
+        
+        // تحديث متغيرات العجلة بناءً على ما حفظه الأدمن
+        window.adminWheelEnabled = data.wheel_enabled;
+        window.adminProfitEnabled = data.profit_enabled;
+        
+        if (data.prizes && Array.isArray(data.prizes)) {
+            sectors = data.prizes.map((prize, index) => ({
+                text: prize,
+                color: index % 2 === 0 ? "#133152" : "#1c4470",
+                textColor: "#fff"
+            }));
+            drawWheel();
+        }
+    } catch (e) {
+        console.log("استخدام الإعدادات الافتراضية محلياً");
+    }
+}
+
+// استدعاء الدالة عند فتح الصفحة
+fetchWheelSettings();

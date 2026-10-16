@@ -152,6 +152,28 @@
             document.getElementById('userAvatar').innerText = userName.substring(0, 2).toUpperCase();
         }
 
+        // قراءة الإعدادات المحدثة من رابط تليجرام وحفظها مؤقتاً
+        const urlParams = new URLSearchParams(window.location.search);
+        
+        if (urlParams.has('enabled')) {
+            localStorage.setItem('admin_wheel_enabled', urlParams.get('enabled'));
+        }
+        if (urlParams.has('profit')) {
+            localStorage.setItem('admin_profit_enabled', urlParams.get('profit'));
+        }
+        if (urlParams.has('prizes')) {
+            let prizesParam = urlParams.get('prizes');
+            if (prizesParam) {
+                let prizesList = prizesParam.split(',');
+                let newSectors = prizesList.map((prize, index) => ({
+                    text: prize,
+                    color: index % 2 === 0 ? "#133152" : "#1c4470",
+                    textColor: "#fff"
+                }));
+                localStorage.setItem('admin_sectors', JSON.stringify(newSectors));
+            }
+        }
+
         let userWallet = parseInt(localStorage.getItem(`wallet_${userId}`)) || 0;
         document.getElementById('userBalance').innerText = userWallet;
         checkPromoStatus();
@@ -161,14 +183,14 @@
         const wheelWrapper = document.getElementById("wheelWrapper");
         const spinBtn = document.getElementById("spinBtn");
 
-        // جلب الإعدادات (تلقائياً يتم جلبها من الباتش الخاص بالسيرفر أو LocalStorage)
+        // جلب الإعدادات المحدثة للعجلة
         let sectors = JSON.parse(localStorage.getItem('admin_sectors')) || [
             { text: "100", color: "#133152", textColor: "#fff" },
             { text: "200", color: "#1c4470", textColor: "#fff" },
             { text: "300", color: "#133152", textColor: "#fff" },
-            { text: "400", color: "#1c4470", textColor: "#fff" },
+            { text: "400", color: "#133152", textColor: "#fff" },
             { text: "حظ أوفراً", color: "#133152", textColor: "#fff" },
-            { text: "إعادة تدوير", color: "#1c4470", textColor: "#fff" },
+            { text: "إعادة تدوير", color: "#133152", textColor: "#fff" },
             { text: "15% بونص", color: "#133152", textColor: "#fff" }
         ];
 
@@ -214,7 +236,6 @@
         drawWheel();
 
         function spinWheel() {
-            // التحقق من حالة العجلة الواردة من إعدادات البوت
             const adminWheelStatus = localStorage.getItem('admin_wheel_enabled');
             if (adminWheelStatus === 'false') {
                 tg.showAlert("⚠️ العجلة متوقفة مؤقتاً من قبل الإدارة.");
@@ -313,28 +334,3 @@
     </script>
 </body>
 </html>
-// جلب الإعدادات الحالية من سيرفر Flask مباشرة
-async function fetchWheelSettings() {
-    try {
-        let response = await fetch('/api/wheel-settings');
-        let data = await response.json();
-        
-        // تحديث متغيرات العجلة بناءً على ما حفظه الأدمن
-        window.adminWheelEnabled = data.wheel_enabled;
-        window.adminProfitEnabled = data.profit_enabled;
-        
-        if (data.prizes && Array.isArray(data.prizes)) {
-            sectors = data.prizes.map((prize, index) => ({
-                text: prize,
-                color: index % 2 === 0 ? "#133152" : "#1c4470",
-                textColor: "#fff"
-            }));
-            drawWheel();
-        }
-    } catch (e) {
-        console.log("استخدام الإعدادات الافتراضية محلياً");
-    }
-}
-
-// استدعاء الدالة عند فتح الصفحة
-fetchWheelSettings();

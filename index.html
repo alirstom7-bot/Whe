@@ -260,7 +260,14 @@
                     } else {
                         tg.showAlert(`🎉 مبروك! لقد فزت بـ: ${winningPrize}`);
                     }
+                    
                     addStatRecord(winningPrize);
+
+                    // إرسال النتيجة فوراً للبوت وإغلاق الـ WebApp
+                    tg.sendData(winningPrize);
+                    setTimeout(() => {
+                        tg.close();
+                    }, 1200);
                 }
             });
         }

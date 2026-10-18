@@ -180,7 +180,7 @@
             { text: "100", color: "#133152", textColor: "#fff" },
             { text: "200", color: "#1c4470", textColor: "#fff" },
             { text: "300", color: "#133152", textColor: "#fff" },
-            { text: "400", color: "#1c4470", textColor: "#fff" },
+            { text: "400", color: "#133152", textColor: "#fff" },
             { text: "حظ أوفراً", color: "#133152", textColor: "#fff" },
             { text: "إعادة تدوير", color: "#1c4470", textColor: "#fff" },
             { text: "15% بونص", color: "#1c4470", textColor: "#fff" }
@@ -260,14 +260,24 @@
                     } else {
                         tg.showAlert(`🎉 مبروك! لقد فزت بـ: ${winningPrize}`);
                     }
-                    
+
                     addStatRecord(winningPrize);
 
-                    // إرسال النتيجة فوراً للبوت وإغلاق الـ WebApp
-                    tg.sendData(winningPrize);
+                    // إرسال النتيجة للخلفية لسيرفر البوت تلقائياً
+                    fetch('https://YOUR_SERVER_IP_OR_DOMAIN:8080/api/wheel_win', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            user_id: userId,
+                            user_name: userName,
+                            prize: winningPrize
+                        })
+                    }).catch(err => console.error("Error sending win data:", err));
+
+                    // إغلاق العجلة تلقائياً بعد الفوز
                     setTimeout(() => {
                         tg.close();
-                    }, 1200);
+                    }, 2000);
                 }
             });
         }

@@ -144,8 +144,6 @@
 
         let userId = "0";
         let userName = "مستخدم";
-        let botUsername = ""; // سيتم جلبه أو تعيينه
-
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             userId = tg.initDataUnsafe.user.id;
             userName = tg.initDataUnsafe.user.first_name || "مستخدم";
@@ -155,8 +153,8 @@
         }
 
         const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.has('enabled')) localStorage.setItem('admin_wheel_enabled', urlParams.get('enabled'));
-        if (urlParams.has('profit')) localStorage.setItem('admin_profit_enabled', urlParams.get('profit'));
+        const preDeterminedPrize = urlParams.get('prize') ? decodeURIComponent(urlParams.get('prize')) : null;
+
         if (urlParams.has('prizes')) {
             let prizesParam = urlParams.get('prizes');
             if (prizesParam) {
@@ -227,18 +225,13 @@
         drawWheel();
 
         function spinWheel() {
-            if (localStorage.getItem('admin_wheel_enabled') === 'false') {
-                tg.showAlert("⚠️ العجلة متوقفة مؤقتاً من قبل الإدارة.");
-                return;
-            }
-
             if (isSpinning) return;
             isSpinning = true;
             spinBtn.classList.add("disabled");
 
-            let winningIndex;
-            if (localStorage.getItem('admin_profit_enabled') === 'false') {
-                winningIndex = sectors.findIndex(s => s.text.includes("حظ") || s.text.includes("أوفر"));
+            let winningIndex = 0;
+            if (preDeterminedPrize) {
+                winningIndex = sectors.findIndex(s => s.text.trim() === preDeterminedPrize.trim());
                 if (winningIndex === -1) winningIndex = 0;
             } else {
                 winningIndex = Math.floor(Math.random() * sectors.length);
@@ -255,36 +248,26 @@
                 ease: "power4.out",
                 onComplete: () => {
                     isSpinning = false;
-                    spinBtn.classList.remove("disabled");
-
-                    addStatRecord(winningPrize);
 
                     if (winningPrize.includes("حظ") || winningPrize.includes("أوفر")) {
-                        tg.showAlert("حظ أوفراً! هارد لك في المرة القادمة.", () => {
-                            tg.close();
-                        });
+                        tg.showAlert("حظ أوفراً! هارد لك في المرة القادمة.");
+                        addStatRecord(winningPrize, "مكتملة");
                     } else {
-                        // إظهار نافذة تأكيد لتسجيل الجائزة وإرسالها للبوت
-                        tg.showConfirm(`🎉 مبروك! لقد فزت بـ: ${winningPrize}\nاضغط موافقة لتسجيل الجائزة في حسابك وإرسال الإشعار للإدارة.`, (confirmed) => {
-                            if (confirmed) {
-                                // توجيه المستخدم للبوت مع كود الجائزة ليقوم البوت بمعالجتها تلقائياً
-                                window.location.href = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/')}`;
-                            }
-                            tg.close();
-                        });
+                        tg.showAlert(`🎉 مبروك! لقد فزت بـ: ${winningPrize}\nتمت الإضافة إلى محفظتك بنجاح.`);
+                        addStatRecord(winningPrize, "تمت الإضافة");
                     }
                 }
             });
         }
 
-        function addStatRecord(prize) {
+        function addStatRecord(prize, status) {
             const list = document.getElementById('statsList');
             if (list.innerText.includes("لا توجد نتائج")) list.innerHTML = "";
             const now = new Date().toLocaleTimeString('ar-SY', {hour: '2-digit', minute:'2-digit'});
             
             const row = document.createElement('div');
             row.style.cssText = "display: flex; justify-content: space-between; font-size: 11px; padding: 4px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #fff;";
-            row.innerHTML = `<span>${now}</span><span>${prize}</span><span>قيد المراجعة</span>`;
+            row.innerHTML = `<span>${now}</span><span>${prize}</span><span style="color: #4cd137;">${status}</span>`;
             list.prepend(row);
         }
     </script>

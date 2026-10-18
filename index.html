@@ -144,6 +144,8 @@
 
         let userId = "0";
         let userName = "مستخدم";
+        let botUsername = ""; // سيتم جلبه أو تعيينه
+
         if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
             userId = tg.initDataUnsafe.user.id;
             userName = tg.initDataUnsafe.user.first_name || "مستخدم";
@@ -180,7 +182,7 @@
             { text: "100", color: "#133152", textColor: "#fff" },
             { text: "200", color: "#1c4470", textColor: "#fff" },
             { text: "300", color: "#133152", textColor: "#fff" },
-            { text: "400", color: "#133152", textColor: "#fff" },
+            { text: "400", color: "#1c4470", textColor: "#fff" },
             { text: "حظ أوفراً", color: "#133152", textColor: "#fff" },
             { text: "إعادة تدوير", color: "#1c4470", textColor: "#fff" },
             { text: "15% بونص", color: "#1c4470", textColor: "#fff" }
@@ -255,29 +257,22 @@
                     isSpinning = false;
                     spinBtn.classList.remove("disabled");
 
-                    if (winningPrize.includes("حظ") || winningPrize.includes("أوفر")) {
-                        tg.showAlert("حظ أوفراً! هارد لك في المرة القادمة.");
-                    } else {
-                        tg.showAlert(`🎉 مبروك! لقد فزت بـ: ${winningPrize}`);
-                    }
-
                     addStatRecord(winningPrize);
 
-                    // إرسال النتيجة للخلفية لسيرفر البوت تلقائياً
-                    fetch('https://YOUR_SERVER_IP_OR_DOMAIN:8080/api/wheel_win', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            user_id: userId,
-                            user_name: userName,
-                            prize: winningPrize
-                        })
-                    }).catch(err => console.error("Error sending win data:", err));
-
-                    // إغلاق العجلة تلقائياً بعد الفوز
-                    setTimeout(() => {
-                        tg.close();
-                    }, 2000);
+                    if (winningPrize.includes("حظ") || winningPrize.includes("أوفر")) {
+                        tg.showAlert("حظ أوفراً! هارد لك في المرة القادمة.", () => {
+                            tg.close();
+                        });
+                    } else {
+                        // إظهار نافذة تأكيد لتسجيل الجائزة وإرسالها للبوت
+                        tg.showConfirm(`🎉 مبروك! لقد فزت بـ: ${winningPrize}\nاضغط موافقة لتسجيل الجائزة في حسابك وإرسال الإشعار للإدارة.`, (confirmed) => {
+                            if (confirmed) {
+                                // توجيه المستخدم للبوت مع كود الجائزة ليقوم البوت بمعالجتها تلقائياً
+                                window.location.href = `https://t.me/share/url?url=${encodeURIComponent('https://t.me/')}`;
+                            }
+                            tg.close();
+                        });
+                    }
                 }
             });
         }

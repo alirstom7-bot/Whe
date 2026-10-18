@@ -101,12 +101,8 @@
         <div class="user-avatar" id="userAvatar">US</div>
     </div>
 
-    <div class="deposit-alert" id="promoAlert" style="display:none;">
-        🎉 مبروك تفعيل النسبة المئوية الإضافية! قم بإتمام شحن محفظتك خلال 24 ساعة لتأكيدها.
-    </div>
-
     <div class="deposit-alert">
-        تحتاج إلى إيداع 500 ل.س أو أكثر للحصول على لفة اليوم.
+        لفات عجلة الحظ مخصصة حسب حجم إيداعاتك الشهرية.
     </div>
 
     <div class="wheel-section">
@@ -127,8 +123,8 @@
 
     <div class="stats-section">
         <div class="stats-header">
-            <span>إحصائياتك</span>
-            <span style="font-size: 11px; color: #8da4c4;">شهر 10-2026</span>
+            <span>سجل الجوائز</span>
+            <span style="font-size: 11px; color: #8da4c4;">سجل فوري</span>
         </div>
         <div class="stats-table-head">
             <span>الوقت</span>
@@ -177,12 +173,11 @@
         const spinBtn = document.getElementById("spinBtn");
 
         let sectors = JSON.parse(localStorage.getItem('admin_sectors')) || [
-            { text: "100", color: "#133152", textColor: "#fff" },
-            { text: "200", color: "#1c4470", textColor: "#fff" },
-            { text: "300", color: "#133152", textColor: "#fff" },
-            { text: "400", color: "#1c4470", textColor: "#fff" },
+            { text: "1000", color: "#133152", textColor: "#fff" },
+            { text: "2000", color: "#1c4470", textColor: "#fff" },
+            { text: "3000", color: "#133152", textColor: "#fff" },
+            { text: "5000", color: "#1c4470", textColor: "#fff" },
             { text: "حظ أوفراً", color: "#133152", textColor: "#fff" },
-            { text: "إعادة تدوير", color: "#1c4470", textColor: "#fff" },
             { text: "15% بونص", color: "#1c4470", textColor: "#fff" }
         ];
 
